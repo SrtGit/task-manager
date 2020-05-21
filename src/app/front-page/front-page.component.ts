@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Subscription } from 'rxjs';
 import { TaskService } from '../task.service';
+import { Task } from '../taskClass';
 
 
 @Component({
@@ -60,35 +61,42 @@ export class FrontPageComponent implements OnInit {
   //Työtehtävän kuittaus tehdyksi
   check(task): void {
     
-    //task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
-
-    this.taskService.addTaskToHistory(task, this.userName).subscribe();
-
-    if (task.repeat === 'none') {
-      this.getTasks();
-      return ;
-    } else {
+    if (task.repeat !== 'none') {
       console.log('Task is repetitive. Trying to postpone..');
       this.changeTime(this.userName, task);
     }
-    this.taskService.deleteActiveTask(this.userName, task).subscribe();
+
+    task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
+    this.taskService.addTaskToHistory(task, this.userName).subscribe();
+
+    this.taskService.deleteActiveTask(this.userName, task).subscribe(
+      data => {
+        this.getTasks();
+      }
+    );
     
     
   }
 
   //Virhe on siinä että pvm ei ole oikeasti tietokannassa DATE-olio!!!
   changeTime(userName, task) {
-    if( task.repeat === 'weekly') {
-      console.log('Changing time for weekly repetitive task');
-      task.alarmDateTime = new Date(task.alarmDateTime);
-      task.alarmDateTime.setDate(task.alarmDateTime.getDate()+7);
-      console.log(task.alarmDateTime);
-    } else if ( task.repeat === 'monthly') {
 
-    } else if ( task.repetition === 'yearly') {
+    const newTask = new Task(task.title, task.descripiton, task.alarmDateTime, task.repeat, task.repeatInterval);
+
+    if( newTask.repeat === 'weekly') {
+
+      console.log('Changing time for weekly repetitive task');
+      newTask.alarmDateTime = new Date(newTask.alarmDateTime);
+      newTask.alarmDateTime.setDate(newTask.alarmDateTime.getDate()+7);
+      console.log(newTask.alarmDateTime);
+
+    } else if ( newTask.repeat === 'monthly') {
+
+    } else if ( newTask.repeat === 'yearly') {
 
     }
-    this.taskService.addTask(task, userName).subscribe( data => {
+    
+    this.taskService.addTask(newTask, userName).subscribe( data => {
       console.log(data);
     });
   }

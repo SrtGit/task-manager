@@ -16,7 +16,7 @@
                 <div class="task_description">
                 <h2>{{task.title}} </h2>
                 <p>{{task.description}}</p>
-                <p>Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
+                <p *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
                 </div>
                 <div class="check" (click)="check(task)">
                     Kuittaa
