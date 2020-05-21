@@ -25,7 +25,7 @@
                 <hr>
             </div>
         </li>
-        <div *ngIf="tasksCompleted">
+        <div *ngIf="tasksForTodayCompleted">
             Onneksi olkoon! Ei tälle päivälle suoritettavia tehtäviä jäljellä..
         </div>
 
@@ -40,16 +40,14 @@
         <li *ngFor="let task of tasksAfterToday">
             <div >
                 <article class="task">
-                <div class="task_description">
-                
-                <div>
-                <h2>{{task.title}} </h2>
-                <p>{{task.description}}</p>
-                </div>
-
-
-
-                </div>
+                    <div>
+                        <p>{{getTaskTime(task)}}</p>
+                    </div>
+                    <div class="task_description">
+                    <h2>{{task.title}} </h2>
+                    <p>{{task.description}}</p>
+                    <p *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
+                    </div>
                 <div class="check" (click)="check(task)">
                     Kuittaa
                 </div>

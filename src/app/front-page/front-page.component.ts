@@ -22,6 +22,7 @@ export class FrontPageComponent implements OnInit {
   tasksAfterToday = [];
 
   tasksCompleted: Boolean = false;
+  tasksForTodayCompleted = true;
   today: Date;
 
   year: Number;
@@ -53,9 +54,6 @@ export class FrontPageComponent implements OnInit {
     this.today = new Date();
     
     this.getTasks();
-
-    
-
   }
 
   //Työtehtävän kuittaus tehdyksi
@@ -84,7 +82,6 @@ export class FrontPageComponent implements OnInit {
     const newTask = new Task(task.title, task.descripiton, task.alarmDateTime, task.repeat, task.repeatInterval);
 
     if( newTask.repeat === 'weekly') {
-
       console.log('Changing time for weekly repetitive task');
       newTask.alarmDateTime = new Date(newTask.alarmDateTime);
       newTask.alarmDateTime.setDate(newTask.alarmDateTime.getDate()+7);
@@ -107,7 +104,9 @@ export class FrontPageComponent implements OnInit {
     this.taskService.getActiveTasks(this.userName).subscribe(data => {
       if(data.length===0) {
         console.log('No tasks in activeTasks');
-        this.tasksToday = [];
+        this.tasksToday = []; //Then no tasks today
+        this.tasksAfterToday = []; //Neither tasks later
+        this.tasksForTodayCompleted = true;
         this.tasksCompleted = true;
         return;
       } else {
@@ -115,32 +114,46 @@ export class FrontPageComponent implements OnInit {
         console.log(data);
         console.log(data[0].title);
         this.initTasks = data;
-        this.myTasks = data;
+        // this.myTasks = data;
 
         console.log(this.initTasks);
         this.setTasksInOrder();
         console.log(this.myTasks);
 
-        this.timeToday = this.getTime();
-        this.filterTasksForToday();
+        this.timeToday = this.getTime(); //Getting time in String format
+        
+        this.filterTasksForToday(); //Filter tasks for array tasksToday and tasksAfterToday
+
+        if (this.tasksToday.length === 0) {
+          this.tasksForTodayCompleted = true;
+        } else {
+          this.tasksForTodayCompleted = false;
+        }
         console.log(this.tasksToday);
     }
   });
   }
+
   //Järjestetään tehtävät suoritusjärjestykseen
   setTasksInOrder() {
-  //   if(this.initTasks.length > 1) {
-  //     this.myTasks = this.initTasks.sort((a, b) => a.alarmDateTime - b.alarmDateTime );
-  //  } else {
-  //    this.myTasks = this.initTasks;
-  //  }
+    if(this.initTasks.length > 1) {
+      this.myTasks = this.initTasks.sort((a, b) => {
+          a.alarmDateTime = new Date(a.alarmDateTime);
+          b.alarmDateTime = new Date(b.alarmDateTime);
+          
+          return a.alarmDateTime - b.alarmDateTime;
+      } );
+   } else {
+     this.myTasks = this.initTasks;
+   }
   }
 
-  
-
   filterTasksForToday() {
+
+    this.tasksAfterToday = [];
     this.tasksToday = this.myTasks.filter((a) => {
-      if (true){ //(a.alarmDateTime.getMonth() <= this.today.getMonth()) && (a.alarmDateTime.getDate() <= this.today.getDate()) 
+      a.alarmDateTime = new Date(a.alarmDateTime);
+      if ((a.alarmDateTime.getMonth() <= this.today.getMonth()) && (a.alarmDateTime.getDate() <= this.today.getDate())){
         return true;
       } else {
         this.tasksAfterToday.push(a);
