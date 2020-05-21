@@ -10,6 +10,7 @@ import { FormGroup, FormControl} from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
+  error = '';
 
 login = new FormGroup({
     userName: new FormControl(''),
@@ -25,7 +26,14 @@ login = new FormGroup({
   // lomakkeen lähetys
   // authService palauttaa observablen jossa on joko true tai false
   onSubmit() {
-    console.log('logging in!');
+    this.authService.login(this.login.get('userName').value, this.login.get('password').value)
+      .subscribe(result => {
+        if (result === true) {
+          this.router.navigate(['/front-page']);
+        } else {
+          this.error = 'Tunnus tai salasana väärä';
+        }
+      });
     }
 
   

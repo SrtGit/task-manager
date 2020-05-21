@@ -1,0 +1,11 @@
+.check {
+    margin-left: auto;
+    border: 2px solid green;
+    padding: 0.5em;
+    align-self: center;
+    margin-right: 2em;
+}
+
+#section1 {
+    margin-bottom: 3em;
+}

@@ -1,1 +1,62 @@
-<p>front-page works!</p>
+<app-header></app-header>
+<article>
+    <h1>({{getTime()}}) Tehtävät:</h1>
+    <p></p>
+    <section id = "section1">
+        <!-- Fetch items from database -->
+        <h1>Tänään:</h1>
+    <ol>
+    
+        <li *ngFor="let task of tasksToday">
+            <div>
+                <article class="task">
+                <div>
+                    <p>{{getTaskTime(task)}}</p>
+                </div>
+                <div class="task_description">
+                <h2>{{task.title}} </h2>
+                <p>{{task.description}}</p>
+                <p>Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
+                </div>
+                <div class="check" (click)="check(task)">
+                    Kuittaa
+                </div>
+                </article>
+                <hr>
+            </div>
+        </li>
+        <div *ngIf="tasksCompleted">
+            Onneksi olkoon! Ei tälle päivälle suoritettavia tehtäviä jäljellä..
+        </div>
+
+    </ol>
+    </section>
+
+    <section id="section2">
+
+    <h1>Tulevat tehtävät: </h1>
+    <ol>
+    
+        <li *ngFor="let task of tasksAfterToday">
+            <div >
+                <article class="task">
+                <div class="task_description">
+                
+                <div>
+                <h2>{{task.title}} </h2>
+                <p>{{task.description}}</p>
+                </div>
+
+
+
+                </div>
+                <div class="check" (click)="check(task)">
+                    Kuittaa
+                </div>
+                </article>
+                <hr>
+            </div>
+        </li>
+    </ol>
+    </section>
+</article>
