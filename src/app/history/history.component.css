@@ -1,0 +1,18 @@
+.historyElement {
+    display: flex;
+}
+
+.del {
+    margin-left: auto;
+    margin-right: 5vw;
+    padding: 1em;
+
+    background-color: red;
+    margin-top: 5px;
+    margin-bottom: auto;
+    border: 1px solid black;
+}
+
+.date {
+    margin-right: 1.0em;
+}
