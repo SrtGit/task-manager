@@ -1,0 +1,106 @@
+<app-header></app-header>
+
+<main>
+    <form [formGroup]="addTaskForm" (ngSubmit)="onSubmit()">
+  
+        <div class="formElement column">
+            <label>
+                Otsikko*:
+            </label>
+            <div>  
+            <input type="text" name="taskTitle" formControlName="taskTitle" required>
+            </div>      
+        </div>
+      
+        <div class="formElement column">
+            <label>
+                Tehtävän kuvaus:
+            </label>
+            <div>
+          <textarea formControlName="taskDescription" rows="5" cols="50"></textarea>
+            </div>
+        </div>
+
+        <div class="formElement">
+            <label for="taskClock">
+                Muistutus aika klo*:
+            </label>
+              
+            <input type="time" id="taskClock" name="taskClock" formControlName="alarmTime" required>
+            
+        </div>
+
+        <div class="calendar">
+            <label>
+                Valitse päivä tehtävälle*: <div> Valittu: <b>{{selectedDateTime.getDate()}}.{{selectedDateTime.getMonth()+1}}.{{selectedDateTime.getUTCFullYear()}}</b></div>
+            </label>
+            
+            <app-calendar (calendarEvent)="onCalendarEvent($event)"></app-calendar>
+            
+        </div>
+
+        <div class="formElement column" >
+
+        <div>
+        <label class="oneCheckbox">
+            <span class="cj">Tehtävän on toistuva:</span>
+        </label>
+            <input type="checkbox" id="taskIsRepeating" formControlName="taskIsRepeating">
+        </div>
+            <div *ngIf="addTaskForm.get('taskIsRepeating').value" id="repeatDetails">
+
+                <div class="formElement column">
+
+                    <label>Valitse toistojakso (vuosi/kk/viikko)</label>
+                    <div>
+                    <select id="repeatBy" name="timePeriod" formControlName="timePeriod">
+                    <option value="yearly">Toistoväli Vuosia</option>
+                    <option value="monthly">Toistoväli Kuukausia</option>
+                    <option value="weekly">Toistoväli Viikkoja</option>
+                    </select>
+                    <br>
+                    <br>
+                    <label>
+                        Toistoväli:
+                    </label>
+                    <input type="text" formControlName="repeatEveryXtimePeriod" class="two_digits">
+                    <span>vuotta/kuukautta/viikkoa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        <p>Tähdellä(*) merkityt kentät ovat pakollisia</p>
+
+        <section >
+            <!-- Fetch items from database -->
+            <h3>Esikatselu:</h3>
+        <ol id = "preview">
+        
+            <li>
+                <div>
+                    <article class="task">
+                    <div class="task_description">
+                    <div class="taskTitleAndDesc">
+                    <h2>{{ addTaskForm.get('taskTitle').value || "Otsikko" }} </h2>
+                    <p>{{ addTaskForm.get('taskDescription').value || "Kuvaus" }}</p>
+                    </div>
+
+                    <div class="taskDateTime">
+                    <span>{{selectedDateTime.getDate()}}.{{selectedDateTime.getMonth()+1}}.{{selectedDateTime.getUTCFullYear()}} </span><br>
+                    <span>{{addTaskForm.get('alarmTime').value || "XX:XX"}}</span>
+                    <p *ngIf="addTaskForm.get('taskIsRepeating').value">Tehtävä toistuu</p>
+                    </div>
+                    </div>
+                    
+                    </article>
+                    
+                </div>
+            </li>
+    
+        </ol>
+        </section>
+
+        <button type="submit" [disabled]="!addTaskForm.valid">Lisää tehtävä</button>
+      </form>
+</main>

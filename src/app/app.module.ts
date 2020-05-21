@@ -9,13 +9,17 @@ import { LoginComponent } from './auth/login/login.component';
 import { HeaderComponent } from './header/header.component';
 import { FrontPageComponent } from './front-page/front-page.component';
 import { AuthGuard } from './auth/auth.guard';
+import { AddTaskComponent } from './add-task/add-task.component';
+import { CalendarComponent } from './calendar/calendar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HeaderComponent,
-    FrontPageComponent
+    FrontPageComponent,
+    AddTaskComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,

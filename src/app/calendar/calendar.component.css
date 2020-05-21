@@ -1,0 +1,76 @@
+main {
+    text-align: center;
+    padding: 1em;
+    margin: auto;
+    border: 1px solid black;
+}
+
+.month {
+    /* border: 2px dashed red; */
+    width: 100%;
+    
+}
+.prev, .next {
+    /* border: 1px solid pink; */
+    padding: 0.5em;
+    font-size: 1.5em;
+}
+
+.prev:hover, .next:hover {
+    color: lightsteelblue;
+}
+
+.month ul {
+    color: white;
+    background-color: rgb(88, 147, 184);
+    padding: 1em;
+    display: flex;
+     border: 2px  lightskyblue;  
+}
+
+.weekdays {
+    display: flex;
+    background-color: #ddd;
+}
+.weekdays > li {
+    flex-grow: 1;
+}
+
+.days {
+    /* border: 1px solid red; */
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #eee;
+}
+
+.days > li {
+    border: 1px solid black;
+    flex-grow: 1;
+    height: 1.5em;
+    width: 12.5%;
+}
+
+.days li:hover {
+    background-color: lightslategray;
+}
+
+.monthBox {
+    flex-grow: 1;
+}
+
+
+ul {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.today {
+    background-color: rgba(144, 189, 247, 0.7);
+}
+
+.daySelected {
+    background-color: rgba(94, 121, 241);
+}

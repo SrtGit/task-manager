@@ -1,0 +1,30 @@
+<main>
+    <div class="month">      
+        <ul>
+          <li class="prev" (click)="prevMonth()">&#10094;</li>
+          <li class="monthBox">
+            <span>{{month}}</span><br>
+            <span style="font-size:18px">{{year}}</span>
+          </li>
+          <li class="next" (click)="nextMonth()">&#10095;</li>
+        </ul>
+    </div>
+      
+      <ul class="weekdays">
+        <li>Ma</li>
+        <li>Ti</li>
+        <li>Ke</li>
+        <li>To</li>
+        <li>Pe</li>
+        <li>La</li>
+        <li>Su</li>
+      </ul>
+      
+      <ul class="days">  
+        <li *ngFor="let val of days" (click)="selectDay(val)" [class.today]="val === today.getDate() && year === today.getFullYear() && monthNumber === today.getMonth()" [class.daySelected]="(val === selectedDay && monthNumber === selectedMonth && year === selectedYear)"> 
+            <!--  -->
+            {{val}}
+        </li>
+      </ul>
+    </main>
+    
