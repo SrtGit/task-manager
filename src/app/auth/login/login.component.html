@@ -1,1 +1,16 @@
-<p>login works!</p>
+
+<main>
+    <h1>Welcome to TaskManager</h1>
+    <h2>Please Enter your Username and Password:</h2>
+    
+    <form [formGroup]="login" (ngSubmit)="onSubmit()">
+    
+        <label for="userName">Username:</label><br>
+        <input type="text" id="userName" name="userName" formControlName="userName"><br><br>
+    
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" formControlName="password"><br>
+        <button type="submit" [disabled]="!login.valid">Kirjaudu</button>
+    </form>
+    
+    </main>
