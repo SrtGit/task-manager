@@ -1,1 +1,31 @@
-<p>history works!</p>
+<app-header></app-header>
+
+<section id = "section1">
+    <!-- Fetch items from database -->
+    <h1>Historia:</h1>
+<ol>
+
+    <li *ngFor="let task of taskHistory">
+        <div *ngIf="!taskHistoryEmpty">
+            <article class="historyElement">
+            <div class="date">
+                <div><strong>Kuitattu:</strong></div>
+                <div>{{getTime(task)}}</div>
+            </div>
+            <div>
+            <h2>{{task.title}} </h2>
+            <p>{{task.description}}</p>
+            </div>
+            <div class="del" (click)="del(task)">
+                Poista
+            </div>
+            </article>
+            <hr>
+        </div>
+    </li>
+    <div *ngIf="taskHistoryEmpty">
+        Työhistoria on tyhjä.
+    </div>
+
+</ol>
+</section>
