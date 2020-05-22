@@ -56,6 +56,7 @@ export class AuthService {
               sessionStorage.setItem('accesstoken', JSON.stringify({ username: username, token: token }));
               this.loginTrue(); // lähetetään viesti navbariin että vaihdetaan login:true -tilaan
               console.log('login onnistui');
+              
               return true; // saatiin token
             } else {
               console.log('login epäonnistui');
@@ -76,6 +77,7 @@ export class AuthService {
   */
   loginTrue(): Observable<any> {
     this.subject.next(true);
+    
     return this.subject.asObservable();
   }
 

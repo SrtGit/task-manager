@@ -39,7 +39,14 @@ export class AddTaskComponent implements OnInit {
   }
 
   onSubmit() {
-    // TODO: Use EventEmitter with form value
+    
+    //Varmistetaan, että käyttäjä antoi tarvittaessa myös toistotehtävän vaatimat tiedot
+    if (this.addTaskForm.get('taskIsRepeating').value === true) {
+      if ( this.addTaskForm.get('repeatEveryXtimePeriod').value == "" || this.addTaskForm.get('timePeriod').value == "") {
+        alert('Valitse toistotehtävälle toistojakso ja toistoväli!');
+        return;
+      }
+    }
     console.warn(this.addTaskForm.value);
 
     //Set title and description

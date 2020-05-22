@@ -29,7 +29,9 @@ login = new FormGroup({
     this.authService.login(this.login.get('userName').value, this.login.get('password').value)
       .subscribe(result => {
         if (result === true) {
-          this.router.navigate(['/front-page']);
+          if (this.authService.redirectUrl) {
+          this.router.navigate([this.authService.redirectUrl]);
+          } else this.router.navigate(['/front-page']);
         } else {
           this.error = 'Tunnus tai salasana väärä';
         }
