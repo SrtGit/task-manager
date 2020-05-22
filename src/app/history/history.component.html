@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<section id = "section1">
+<section>
     <!-- Fetch items from database -->
     <h1>Historia:</h1>
 <ol>
@@ -20,12 +20,14 @@
                 Poista
             </div>
             </article>
-            <hr>
+           
         </div>
     </li>
-    <div *ngIf="taskHistoryEmpty">
-        Työhistoria on tyhjä.
-    </div>
+    
 
 </ol>
+
+<div *ngIf="taskHistoryEmpty">
+    Työhistoria on tyhjä.
+</div>
 </section>

@@ -86,7 +86,7 @@ export class FrontPageComponent implements OnInit {
   //Metodi muuttaa annetun task-olion muistutuspäivää
   changeTime(task) {
 
-    const newTask = new Task(task.title, task.descripiton, task.alarmDateTime, task.repeat, task.repeatInterval);
+    const newTask = new Task(task.title, task.description, task.alarmDateTime, task.repeat, task.repeatInterval);
     newTask.alarmDateTime = new Date(newTask.alarmDateTime);
 
     //Selvitetään toistuuko tehtävä viikottain, kuukausittain vai vuosittain

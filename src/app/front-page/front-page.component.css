@@ -1,9 +1,14 @@
 .check {
     margin-left: auto;
     border: 2px solid green;
+    border-radius: 0.2em;
     padding: 0.5em;
     align-self: center;
     margin-right: 2em;
+}
+
+.check:hover {
+    background-color: lightgreen;
 }
 
 #section1 {
