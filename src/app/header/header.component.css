@@ -5,3 +5,18 @@ header {
 h1 {
     text-decoration: underline;
 }
+
+.login {
+    background-color: lightseagreen;
+    margin-right: 0.5em;
+    margin-top: 0.5em;
+    margin-left: auto;
+    padding: 0.5em;
+    border: 1px solid gray;
+    border-radius: 1em;
+    max-width: fit-content;
+}
+
+.login:hover {
+    background-color: lightgrey;
+}

@@ -7,6 +7,7 @@ import { JwtHelperService } from '@auth0/angular-jwt'; // kirjasto jwt:n käsitt
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class AuthService {
   private subject = new Subject<any>(); // subjectilla viesti navbariin että token on tullut
   public redirectUrl;
 
-  constructor(private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient) {
     // Jos token on jo sessionStoragessa, otetaan se sieltä muistiin
     const currentUser = JSON.parse(sessionStorage.getItem('accesstoken'));
     this.token = currentUser && currentUser.token;
@@ -82,6 +83,8 @@ export class AuthService {
   logout(): void {
     this.token = null;
     sessionStorage.removeItem('accesstoken');
+    this.router.navigate(['/login']);
+
   }
 }
 
