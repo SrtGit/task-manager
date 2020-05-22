@@ -3,9 +3,9 @@ export class Task {
     description: String;
     alarmDateTime: Date;
     repeat: String; // weekly | monthly | yearly
-    repeatInterval: Number;
+    repeatInterval: number;
 
-    constructor(title:String, description:String, date:Date, repetition: String, interval: Number ) {
+    constructor(title:String, description:String, date:Date, repetition: String, interval: number ) {
         this.title = title;
         this.description= description;
         this.alarmDateTime = date; //Pvm ja kellonaika hälytykselle

@@ -33,6 +33,7 @@ export class FrontPageComponent implements OnInit {
 
   login: boolean;
   subscription: Subscription; // Subscription -tyyppiseen olioon voidaan tallentaa observablen tilaus.
+  checkingInProcess: Boolean = false;
 
   constructor(private authService: AuthService, private taskService: TaskService) {
     // Tilataan viesti ja tallennetaan tulos this.login -muuttujaan
@@ -58,44 +59,86 @@ export class FrontPageComponent implements OnInit {
 
   //Työtehtävän kuittaus tehdyksi
   check(task): void {
+
+    //Huolehditaan siitä että käyttäjä ei ehdi sekaannuttaa asyncronisesti toimivia tietokanta toimintoja nopeilla klikkailuilla..
+    //Kun check() funktiota suoritetaan, piilotetaan 'kuittaa'-painikkeet käyttäjältä
+    this.checkingInProcess = true;
+    setTimeout(() => {
+      this.checkingInProcess = false;
+    }, 1000);
     
+    //Tutkitaan onko tehtävä asetettu toistuvaksi
     if (task.repeat !== 'none') {
       console.log('Task is repetitive. Trying to postpone..');
-      this.changeTime(this.userName, task);
+      this.changeTime(task);
+    } else {
+       task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
+       this.taskService.addTaskToHistory(task, this.userName).subscribe();
+
+       this.taskService.deleteActiveTask(this.userName, task).subscribe(
+         data => {
+           this.getTasks();
+         }
+       );
     }
-
-    task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
-    this.taskService.addTaskToHistory(task, this.userName).subscribe();
-
-    this.taskService.deleteActiveTask(this.userName, task).subscribe(
-      data => {
-        this.getTasks();
-      }
-    );
-    
-    
   }
 
-  //Virhe on siinä että pvm ei ole oikeasti tietokannassa DATE-olio!!!
-  changeTime(userName, task) {
+  //Metodi muuttaa annetun task-olion muistutuspäivää
+  changeTime(task) {
 
     const newTask = new Task(task.title, task.descripiton, task.alarmDateTime, task.repeat, task.repeatInterval);
+    newTask.alarmDateTime = new Date(newTask.alarmDateTime);
 
+    //Selvitetään toistuuko tehtävä viikottain, kuukausittain vai vuosittain
     if( newTask.repeat === 'weekly') {
       console.log('Changing time for weekly repetitive task');
-      newTask.alarmDateTime = new Date(newTask.alarmDateTime);
-      newTask.alarmDateTime.setDate(newTask.alarmDateTime.getDate()+7);
+      const daysForward = newTask.repeatInterval *7;
+      newTask.alarmDateTime.setDate(newTask.alarmDateTime.getDate()+daysForward);
       console.log(newTask.alarmDateTime);
 
     } else if ( newTask.repeat === 'monthly') {
+      
+      const monthsForward = newTask.repeatInterval; 
+      newTask.alarmDateTime.setMonth(newTask.alarmDateTime.getMonth()+monthsForward);
 
     } else if ( newTask.repeat === 'yearly') {
-
+      const yearsForward = newTask.repeatInterval;
+      newTask.alarmDateTime.setFullYear(newTask.alarmDateTime.getFullYear()+yearsForward);
     }
     
-    this.taskService.addTask(newTask, userName).subscribe( data => {
+    //Kun työtehtävän suorituspäivä on siirretty määräajan eteenpäin
+    //Lisätään työtehtävä tietokantaan
+    
+    //Poistetaan vanha tehtävä tietokannasta
+    //this.taskService.deleteActiveTask(this.userName, task).subscribe( data =>{
+      
+      // task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
+      // this.taskService.addTaskToHistory(task, this.userName).subscribe();
+    
+      // console.log(data);
+      // this.taskService.addTask(newTask, this.userName).subscribe( data => {
+      //   console.log(data);  
+      //   this.getTasks();
+      //   });
+      //}
+    //);
+
+    this.taskService.deleteActiveTask(this.userName, task).toPromise().then( data => {
+      task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
+      this.taskService.addTaskToHistory(task, this.userName).subscribe();
+    
       console.log(data);
-    });
+      this.taskService.addTask(newTask, this.userName).subscribe( data => {
+        console.log(data);  
+        this.getTasks();
+        });
+    }
+    );
+    // this.taskService.addTask(newTask, userName).subscribe( data => {
+    //   console.log(data);
+    // });
+    
+    
   }
 
   getTasks() {
@@ -153,7 +196,7 @@ export class FrontPageComponent implements OnInit {
     this.tasksAfterToday = [];
     this.tasksToday = this.myTasks.filter((a) => {
       a.alarmDateTime = new Date(a.alarmDateTime);
-      if ((a.alarmDateTime.getMonth() <= this.today.getMonth()) && (a.alarmDateTime.getDate() <= this.today.getDate())){
+      if ((a.alarmDateTime.getMonth() <= this.today.getMonth()) && (a.alarmDateTime.getDate() <= this.today.getDate() && (a.alarmDateTime.getFullYear() <= this.today.getFullYear()))){
         return true;
       } else {
         this.tasksAfterToday.push(a);
@@ -182,4 +225,9 @@ export class FrontPageComponent implements OnInit {
     return `${time.getDate()}.${time.getMonth()+1}.${time.getFullYear()} ${hours}:${minutes}`;
 }
 
+getRepeatString(repeat: String) {
+  if(repeat === 'weekly') return 'viikko';
+  else if(repeat === 'monthly') return 'kuukausi';
+  else if(repeat === 'yearly') return 'vuosi';
+}
 }

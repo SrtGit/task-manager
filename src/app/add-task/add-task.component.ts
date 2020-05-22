@@ -57,7 +57,7 @@ export class AddTaskComponent implements OnInit {
     let repeatPeriod : String = this.addTaskForm.get('timePeriod').value;
     if (this.addTaskForm.get('taskIsRepeating').value == false) repeatPeriod = 'none';
 
-    let interval: Number = this.addTaskForm.get('repeatEveryXtimePeriod').value;
+    let interval: number = this.addTaskForm.get('repeatEveryXtimePeriod').value;
 
 
     this.newTask = new Task(taskTitle, taskDescription, alarmTime, repeatPeriod, interval);

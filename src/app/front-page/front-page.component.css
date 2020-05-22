@@ -9,3 +9,16 @@
 #section1 {
     margin-bottom: 3em;
 }
+
+.taskTime {
+    font-size: 0.9em;
+}
+
+.task_description {
+    background-color: rgb(178, 230, 247);
+}
+
+article h2 {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}

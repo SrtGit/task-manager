@@ -10,15 +10,18 @@
         <li *ngFor="let task of tasksToday">
             <div>
                 <article class="task">
-                <div>
-                    <p>{{getTaskTime(task)}}</p>
-                </div>
+                
                 <div class="task_description">
+                <div class="taskTime">
+                    <span>{{getTaskTime(task)}}</span><br>
+                    <span *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}.{{getRepeatString(task.repeat)}}</span>
+                    <span *ngIf="task.repeat === 'none'">Kertatehtävä</span>
+                </div>
                 <h2>{{task.title}} </h2>
                 <p>{{task.description}}</p>
-                <p *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
+                                
                 </div>
-                <div class="check" (click)="check(task)">
+                <div *ngIf="!checkingInProcess" class="check" (click)="check(task)">
                     Kuittaa
                 </div>
                 </article>
@@ -40,15 +43,16 @@
         <li *ngFor="let task of tasksAfterToday">
             <div >
                 <article class="task">
-                    <div>
-                        <p>{{getTaskTime(task)}}</p>
-                    </div>
                     <div class="task_description">
+                    <div class="taskTime">
+                        <span>{{getTaskTime(task)}}</span><br>
+                        <span *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}.{{getRepeatString(task.repeat)}}</span>
+                        <span *ngIf="task.repeat === 'none'">Kertatehtävä</span>
+                    </div>
                     <h2>{{task.title}} </h2>
                     <p>{{task.description}}</p>
-                    <p *ngIf="task.repeat !== 'none'">Toistuu joka {{task.repeatInterval}}. {{task.repeat}}</p>                
                     </div>
-                <div class="check" (click)="check(task)">
+                    <div *ngIf="!checkingInProcess" class="check" (click)="check(task)">
                     Kuittaa
                 </div>
                 </article>
