@@ -17,7 +17,7 @@
                 Tehtävän kuvaus:
             </label>
             <div>
-          <textarea formControlName="taskDescription" rows="5" cols="50"></textarea>
+          <textarea formControlName="taskDescription" rows="5" cols="30"></textarea>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
 
         <div class="calendar">
             <label>
-                Valitse päivä tehtävälle*: <div> Valittu: <b>{{selectedDateTime.getDate()}}.{{selectedDateTime.getMonth()+1}}.{{selectedDateTime.getUTCFullYear()}}</b></div>
+                <strong>Valitse päivä tehtävälle*:</strong> <div> Valittu: <b>{{selectedDateTime.getDate()}}.{{selectedDateTime.getMonth()+1}}.{{selectedDateTime.getUTCFullYear()}}</b></div>
             </label>
             
             <app-calendar (calendarEvent)="onCalendarEvent($event)"></app-calendar>

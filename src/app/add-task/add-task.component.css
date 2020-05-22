@@ -60,3 +60,41 @@ form {
   /* border: 1px solid red; */
   width: 100%;
 }
+
+
+/* Task-laatikon tyylit alkavat tästä */
+article {
+    text-align: center;
+}
+
+ol {
+    list-style: none;
+}
+
+.task {
+    display: flex;
+}
+
+.task_description {
+    margin-left: 0px;
+    border: 1px solid black;
+    border-radius: 1em;
+    box-shadow: 2px 2px gray;
+    width: 50vw;
+}
+
+.taskTitleAndDesc {    
+    flex-grow: 1;
+}
+
+.taskDateTime {
+    padding-left: 1em;
+    margin-right: 2em;
+}
+
+@media screen and (max-width: 600px) {
+    form {
+        margin: auto;
+        padding: 0px;
+    }
+}

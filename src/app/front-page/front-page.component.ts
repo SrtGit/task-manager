@@ -230,4 +230,12 @@ getRepeatString(repeat: String) {
   else if(repeat === 'monthly') return 'kuukausi';
   else if(repeat === 'yearly') return 'vuosi';
 }
+
+delRepeatingTask(task) {
+  let decidedToRemove = confirm('Haluatko varmasti poistaa tehtävän? Valintaa ei voi peruuttaa.');
+
+  if (decidedToRemove) {
+    this.taskService.deleteActiveTask(this.userName, task).subscribe( data => this.getTasks());
+  } else return;
+}
 }

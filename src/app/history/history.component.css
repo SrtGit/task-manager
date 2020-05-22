@@ -31,3 +31,7 @@ li:nth-of-type(even) {
     background-color: lightblue;
     padding: 0.5em 0em;
 }
+
+ol {
+    list-style: none;
+}

@@ -1,8 +1,9 @@
 main {
+    max-width: 500px;
     text-align: center;
-    padding: 1em;
+   
     margin: auto;
-    border: 1px solid black;
+    
 }
 
 .month {
