@@ -1,3 +1,8 @@
+/*
+Kalenteri komponentti, yhtä pientä funktiota lukuunottamatta itse rakennettu ja mietitty.
+Kopioitu funktio merkitty koodiin.
+*/
+
 import { Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
@@ -13,22 +18,22 @@ export class CalendarComponent implements OnInit {
   today: Date;
 
   monthNumber;
-  month; //Missä kuukaudessa kalenterin näkymä on
-  year; //Missä vuodessa kalenteri näkymä on
-  daysInMonth; //Montako päivää kuukaudessa on
+  month: String; //Missä kuukaudessa kalenterin näkymä on
+  year: number; //Missä vuodessa kalenteri näkymä on
+  daysInMonth: number; //Montako päivää kuukaudessa on
 
   monthStartsOn; //Viikonpäivä jona kuukausi alkaa
   date; //Monesko kuukauden päivä nyt on
 
   days = []; //Lista, johon tallennetaan kuukauden päivät
 
-  dayBoxStyle;
+  dayBoxStyle: String;
 
-  selectedDay; //day that is selected from calendar
-  selectedMonth;
-  selectedYear;
+  selectedDay: number; //päivä, joka on valittu kalenterista
+  selectedMonth: number;
+  selectedYear: number;
 
-  selectedDate;
+  selectedDate: Date;
 
   constructor() { }
 
@@ -36,7 +41,8 @@ export class CalendarComponent implements OnInit {
 
     this.dayBoxStyle = 'dayNotSelected';
 
-    this.dateViewNow = new Date();
+    //Tallennetaan kuluva päivä
+    this.dateViewNow = new Date(); 
     this.today = this.dateViewNow;
 
     this.monthNumber = this.dateViewNow.getMonth(); //tammikuussa palautuu 0
@@ -46,19 +52,27 @@ export class CalendarComponent implements OnInit {
     this.selectedDay = this.dateViewNow.getDate();
     this.selectedMonth = this.monthNumber;
     this.selectedYear = this.year;
-    this.calendarEvent.emit(this.dateViewNow);
+    this.calendarEvent.emit(this.dateViewNow); //Lähetettää parent-elementille kuluvan päivän
 
+    //Luodaan kalenterinäkymä
     this.createMonthView();
 
     console.log("Initialized!"+ this.monthNumber + " " + this.days.length);
   }
   
-  selectDay(day) {
-    if(day == '') day = this.daysInMonth;
-    if(day == '-') day = 1;
+  /**
+   * Metodi lähettää käyttäjän valitseman päivämäärän parent-elementille
+   * @param day Kalenterissa näkyvä päivä
+   */
+  selectDay(day): void {
+    //Käsitellään tilanteet joissa käyttäjä klikkasi laatikko, jossa ei ole numeroa, vaan '' tai -
+    if(day == '') day = this.daysInMonth; //Merkitään kuukauden viimeiseksi päiväksi
+    if(day == '-') day = 1; //Merkitään kuun ensimmäiseksi päiväksi
     
+    //Päivitetään selectedDate
     this.selectedDate = new Date(this.year, this.monthNumber, day);
 
+    //Lähetetään päivitetty valinta parent-elementille
     this.calendarEvent.emit(this.selectedDate);
 
     //Asetetaan pvm kalenteria varten.
@@ -66,29 +80,47 @@ export class CalendarComponent implements OnInit {
     this.selectedMonth = this.selectedDate.getMonth();
     this.selectedYear = this.selectedDate.getFullYear();
 
-    console.log(`Selected Date: ${this.selectedDate.getDate()}.${this.selectedDate.getMonth()+1}.${this.selectedDate.getFullYear()}`);
   }
 
-  nextMonth() {
+  /**
+   * Metodi päivittää kalenterinäkymän seuraavaan kuukauteen
+   */
+  nextMonth(): void {
     this.changeMonth(1);
     this.createMonthView();
   }
 
-  prevMonth() {
+  /**
+   * Metodi päivittää kalenterinäkymän edelliseen kuukauteen
+   */
+  prevMonth(): void {
     this.changeMonth(-1);
     this.createMonthView();
   }
 
-  changeMonth(a:Number) {
+  /**
+   * Metodi siirtää kalenterin kuukausinäkymää annetun numeron verran
+   * @param a Kuvaa sitä halutaanko siirtyä askel eteen vai taakse 1/-1
+   */
+  changeMonth(a:Number): void {
+    //Tutkitaan a:n oikeellisuus
+    if(a !== 1 || a!== -1) {
+      console.log("Error in function changeMonth! Invalid argument, expected 1 or -1 but got: " + a);
+      return;
+    }
     this.monthNumber += a;
-    if(this.monthNumber>11) {
+    if(this.monthNumber>11) { //Jos ylitettiin viimeinen kuukausi..
       this.monthNumber = 0;
       this.year++;
-    } else if(this.monthNumber<0) {
+    } else if(this.monthNumber<0) { //Jos mentiin taaksepäin tammikuusta..
       this.monthNumber = 11;
       this.year--;
     }
   }
+
+  /**
+   * Metodi muuttaa kalenterin näkymää vastaamaan valittua kuukautta
+   */
   createMonthView():void {
 
     this.month = this.getMonthInString(this.monthNumber);
@@ -96,12 +128,16 @@ export class CalendarComponent implements OnInit {
     this.monthStartsOn = new Date(this.year, this.monthNumber, 1).getDay();
     if(this.monthStartsOn === 0) this.monthStartsOn = 7; //Korjataan 0:s päivä vastaamaan seitsemättä päivää
 
+    //Lasketaan montako päivää kuukaudessa on
     this.daysInMonth = this.getDaysInMonth(this.monthNumber, this.year);
 
     this.createListOfDays();
   }
 
-  createListOfDays() {
+  /**
+   * Meotdi luo listan kuukauden päivien numeroista. Listaa käytetään kuukausinäkymän piirtämisessä.
+   */
+  createListOfDays(): void {
     let day = 1;
 
     //Määritellään montako laatikkoa tehdään
@@ -126,12 +162,20 @@ export class CalendarComponent implements OnInit {
         
     }
   }
-  // Seuraava funktio on kopioitu: 
-  // https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-with-pure-javascript-a86f1303267d
+  /**
+   * Tutkitaan montako päivää on kuukaudessa. Yksinkertainen funktio on kopioitu osoitteesta:
+   * https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-with-pure-javascript-a86f1303267d
+   * @param iMonth Kuukausi, jonka päivät halutaan tutkia
+   * @param iYear Vuosi, jona kyseinen kuukausi esiintyy
+   */
   getDaysInMonth (iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
   }
 
+  /**
+   * Metodi palauttaa kuukauden numeroarvoa vastaavan merkkijonon
+   * @param a Kuukauden numeroarvo 0 = 'Tammikuu' ... 11 = 'Joulukuu'
+  */
   getMonthInString(a: Number) {
     let month = "";  
     

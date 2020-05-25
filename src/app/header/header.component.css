@@ -7,7 +7,8 @@ h1 {
 }
 
 .login {
-    background-color: lightseagreen;
+    color: rgb(39, 49, 54);
+    background-color: rgb(116, 223, 217);
     margin-right: 0.5em;
     margin-top: 0.5em;
     margin-left: auto;

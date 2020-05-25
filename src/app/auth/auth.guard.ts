@@ -27,8 +27,10 @@ export class AuthGuard implements CanActivate {
 
   checkLogin(url: string): boolean {
 
+      //Jos kirjautumistiedot löytyy, palautetaan true
       if(sessionStorage.getItem('accesstoken')) return true;
 
+      //Muutoin..
       //Tallennetaan haettu osoite uudelleenohjausta varten
       this.auhtService.redirectUrl = url;
 

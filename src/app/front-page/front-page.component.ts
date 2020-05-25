@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
-import { AuthService } from '../auth/auth.service';
-import { Subscription } from 'rxjs';
 import { TaskService } from '../task.service';
 import { Task } from '../taskClass';
 
@@ -32,29 +29,22 @@ export class FrontPageComponent implements OnInit {
   timeToday: String;
 
   login: boolean;
-  subscription: Subscription; // Subscription -tyyppiseen olioon voidaan tallentaa observablen tilaus.
+  
   checkingInProcess: Boolean = false;
 
-  constructor(private authService: AuthService, private taskService: TaskService) {
-    // Tilataan viesti ja tallennetaan tulos this.login -muuttujaan
-    this.subscription = this.authService.loginTrue().subscribe(message => { this.login = message; });
-    /* varmistetaan että login -tila säilyy myös kun sivu reffataan
-       varmistus tehdään katsomalla onko token sessionstoragessa.
-       Yllä oleva observablen tilaus silti tarvitaan, sillä sessionstoragen
-       tarkistus vaatii aina reffauksen koska sitä ei voi kutsua asynkronisesti. */
+  constructor(private taskService: TaskService) {
+    
+    //Otetaan sessionStoragesta käyttäjänimi haltuun
     const atoken = sessionStorage.getItem('accesstoken');
     if (atoken) {
-      this.login = true;
-      this.userName = JSON.parse(atoken).username;
-    } else {
-      this.login = false;
-    }
+        this.userName = JSON.parse(atoken).username;
+    } 
   }
 
   ngOnInit(): void {
-    this.today = new Date();
+    this.today = new Date(); //Tallenntetaan tämän hetkinen aika
     
-    this.getTasks();
+    this.getTasks(); //Haetaan tehtävät tietokannasta
   }
 
   //Työtehtävän kuittaus tehdyksi
@@ -72,6 +62,8 @@ export class FrontPageComponent implements OnInit {
       console.log('Task is repetitive. Trying to postpone..');
       this.changeTime(task);
     } else {
+      //Jos tehtävä oli kertaluonteinen, niin lisätään se historiaan ja poistetaan aktiivisita tehtävistä
+
        task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
        this.taskService.addTaskToHistory(task, this.userName).subscribe();
 
@@ -83,7 +75,11 @@ export class FrontPageComponent implements OnInit {
     }
   }
 
-  //Metodi muuttaa annetun task-olion muistutuspäivää
+  /**
+   * Metodi muuttaa annetun task-olion muistutuspäivää, lisää kuitatun
+   * tehtävän historiaan, poistaa vanhan tehtävän ja lisään uudella päivämäärällä olevan tehtävän aktiivisten tehtävien listaan
+   * @param task Task-Olio
+   */
   changeTime(task) {
 
     const newTask = new Task(task.title, task.description, task.alarmDateTime, task.repeat, task.repeatInterval);
@@ -106,23 +102,6 @@ export class FrontPageComponent implements OnInit {
       newTask.alarmDateTime.setFullYear(newTask.alarmDateTime.getFullYear()+yearsForward);
     }
     
-    //Kun työtehtävän suorituspäivä on siirretty määräajan eteenpäin
-    //Lisätään työtehtävä tietokantaan
-    
-    //Poistetaan vanha tehtävä tietokannasta
-    //this.taskService.deleteActiveTask(this.userName, task).subscribe( data =>{
-      
-      // task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
-      // this.taskService.addTaskToHistory(task, this.userName).subscribe();
-    
-      // console.log(data);
-      // this.taskService.addTask(newTask, this.userName).subscribe( data => {
-      //   console.log(data);  
-      //   this.getTasks();
-      //   });
-      //}
-    //);
-
     this.taskService.deleteActiveTask(this.userName, task).toPromise().then( data => {
       task.alarmDateTime = new Date(); //Kuvaa nyt aikaa jolloin työ kuitattiin
       this.taskService.addTaskToHistory(task, this.userName).subscribe();
@@ -134,13 +113,14 @@ export class FrontPageComponent implements OnInit {
         });
     }
     );
-    // this.taskService.addTask(newTask, userName).subscribe( data => {
-    //   console.log(data);
-    // });
+    
     
     
   }
 
+  /**
+   * Metodi hakee aktiiviset tehtävät tasksToday ja tasksAfterToday listoihin
+   */
   getTasks() {
     console.log('Requesting tasks for user: ' +this.userName);
    
@@ -177,7 +157,9 @@ export class FrontPageComponent implements OnInit {
   });
   }
 
-  //Järjestetään tehtävät suoritusjärjestykseen
+  /**
+   * Metodi järjestää muistutusajan mukaan vanhempi päivämäärä listassa kauemmaksi
+   */
   setTasksInOrder() {
     if(this.initTasks.length > 1) {
       this.myTasks = this.initTasks.sort((a, b) => {
@@ -191,6 +173,11 @@ export class FrontPageComponent implements OnInit {
    }
   }
 
+  /**
+   * Metodi suodattaa tämän kuluvan päivän tehtävät muista
+   * Ja sijoittaa kunkin tehtävän sille sopivaan listaan
+   * joko tasksToday tai tasksAfterToday
+   */
   filterTasksForToday() {
 
     this.tasksAfterToday = [];
@@ -205,6 +192,9 @@ export class FrontPageComponent implements OnInit {
     });
   }
 
+  /**
+   * Metodi muuttaa aloitushetken-ajan string-tyyppiseksi
+   */
   getTime() {
     this.year = this.today.getFullYear();
     this.month = this.today.getMonth()+1;
@@ -212,6 +202,11 @@ export class FrontPageComponent implements OnInit {
     return `${this.day}.${this.month}.${this.year}`;
   }
 
+  /**
+   * Metodi muuttaa task.alarmDateTime-merkkijonon Date tyyppiseksi
+   * Ja palauttaa ajan muokattuna merkkijonona
+   * @param task Task-Olio
+   */
   getTaskTime(task) {
     let time = new Date(task.alarmDateTime);
   
@@ -225,12 +220,20 @@ export class FrontPageComponent implements OnInit {
     return `${time.getDate()}.${time.getMonth()+1}.${time.getFullYear()} ${hours}:${minutes}`;
 }
 
+/**
+ * Metodi muuttaa englanninkielisen sanan suomenkieliseksi
+ * @param repeat weekly | monthly | yearly
+ */
 getRepeatString(repeat: String) {
   if(repeat === 'weekly') return 'viikko';
   else if(repeat === 'monthly') return 'kuukausi';
   else if(repeat === 'yearly') return 'vuosi';
 }
 
+/**
+ * Metodi poistaa tehtävän aktiiviset tehtävät taulukosta tietokannassa
+ * @param task Poistettava tehtävä
+ */
 delRepeatingTask(task) {
   let decidedToRemove = confirm('Haluatko varmasti poistaa tehtävän? Valintaa ei voi peruuttaa.');
 

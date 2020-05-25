@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
-import { AuthService } from '../auth/auth.service';
-import { Subscription } from 'rxjs';
 import { TaskService } from '../task.service';
 @Component({
   selector: 'app-history',
@@ -15,22 +12,11 @@ export class HistoryComponent implements OnInit {
   taskHistory;
   taskHistoryEmpty = true;
 
-  login: boolean;
-  subscription: Subscription; 
-
-  constructor(private authService: AuthService, private taskService: TaskService) {
-    // Tilataan viesti ja tallennetaan tulos this.login -muuttujaan
-    this.subscription = this.authService.loginTrue().subscribe(message => { this.login = message; });
-    /* varmistetaan että login -tila säilyy myös kun sivu reffataan
-       varmistus tehdään katsomalla onko token sessionstoragessa.
-       Yllä oleva observablen tilaus silti tarvitaan, sillä sessionstoragen
-       tarkistus vaatii aina reffauksen koska sitä ei voi kutsua asynkronisesti. */
+  constructor(private taskService: TaskService) {
+   
     const atoken = sessionStorage.getItem('accesstoken');
     if (atoken) {
-      this.login = true;
       this.userName = JSON.parse(atoken).username;
-    } else {
-      this.login = false;
     }
    }
 

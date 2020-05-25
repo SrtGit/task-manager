@@ -1,4 +1,7 @@
 /*
+  TÄRKEÄÄ!:
+  Tämän tiedoston koodi ja kommentit, lähestulkoon kokonaan, on Lainattu Tommi Tuikan Meanfront-sovelluksesta
+
   The object of this service is to determine wether the user is authenticated or not
 */
 import { Injectable } from '@angular/core';
@@ -15,7 +18,7 @@ import { Router } from '@angular/router';
 @Injectable()
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/users/login'; // autentikaatiopalvelun osoite
+  private apiUrl = 'http://localhost:3000/users'; // autentikaatiopalvelun osoite
   public token: string;
   private jwtHelp = new JwtHelperService(); // helpperipalvelu jolla dekoodataan token
   private subject = new Subject<any>(); // subjectilla viesti navbariin että token on tullut
@@ -26,12 +29,16 @@ export class AuthService {
     const currentUser = JSON.parse(sessionStorage.getItem('accesstoken'));
     this.token = currentUser && currentUser.token;
   }
+
+  register(username: string, password: string): Observable<any> {
+    return this.http.post(this.apiUrl+'/register', { username: username, password: password, isadmin: true});
+  }
   /* login-metodi ottaa yhteyden backendin autentikaatioreittiin, postaa tunnarit
   ja palauttaa Observablena true tai false riippuen siitä saatiinko lähetetyillä
   tunnareilla token backendistä */
   login(username: string, password: string): Observable<boolean> {
     // tässä ei käytetä JSON.stringify -metodia lähtevälle tiedolle
-    return this.http.post(this.apiUrl, { username: username, password: password })
+    return this.http.post(this.apiUrl+'/login', { username: username, password: password })
       .pipe(map((res) => {
         console.log(res); // loggaa alla olevan tyylisen vastauksen
         /*
@@ -54,7 +61,7 @@ export class AuthService {
             if ( payload.username === username && payload.isadmin === true ) { // 
               // token sessionStorageen
               sessionStorage.setItem('accesstoken', JSON.stringify({ username: username, token: token }));
-              this.loginTrue(); // lähetetään viesti navbariin että vaihdetaan login:true -tilaan
+              
               console.log('login onnistui');
               
               return true; // saatiin token
@@ -71,16 +78,7 @@ export class AuthService {
         }
       }));
   }
-  /* Ilmoitetaan navbariin että koska ollaan loggauduttu,
-     niin Logout on mahdollista tehdä, joten vaihdetaan navbariin login-linkin
-     tilalle logout-linkki
-  */
-  loginTrue(): Observable<any> {
-    this.subject.next(true);
-    
-    return this.subject.asObservable();
-  }
-
+  
   // logout poistaa tokenin sessionStoragesta
   logout(): void {
     this.token = null;
@@ -89,39 +87,3 @@ export class AuthService {
 
   }
 }
-
-// import { Injectable } from '@angular/core';
-// import { Router } from '@angular/router';
-// import { Observable, of } from 'rxjs';
-// import { tap, delay } from 'rxjs/operators';
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class AuthService {
-//   isLoggedIn = false;
-
-//   // store the URL so we can redirect after logging in
-//   redirectUrl: string;
-
-//   constructor(private router: Router) {
-
-//   }
-
-//   login():void {
-    
-//     //Tässä pitäisi tarkistaa onko käyttäjä validi
-//     this.isLoggedIn = true;
-
-//     if (this.redirectUrl) {
-//       this.router.navigate([this.redirectUrl]);
-//     } else {
-//       this.router.navigate(['/front-page']);
-//     }
-    
-//   }
-
-//   logout(): void {
-//     this.isLoggedIn = false;
-//   }
-// }

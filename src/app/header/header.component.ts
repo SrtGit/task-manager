@@ -14,11 +14,7 @@ export class HeaderComponent implements OnInit {
   login: Boolean;
   userName: String;
   constructor(private authService: AuthService) {
-    this.subscription = this.authService.loginTrue().subscribe(message => { this.login = message; });
-    /* varmistetaan että login -tila säilyy myös kun sivu reffataan
-       varmistus tehdään katsomalla onko token sessionstoragessa.
-       Yllä oleva observablen tilaus silti tarvitaan, sillä sessionstoragen
-       tarkistus vaatii aina reffauksen koska sitä ei voi kutsua asynkronisesti. */
+   
     const atoken = sessionStorage.getItem('accesstoken');
     if (atoken) {
       this.login = true;

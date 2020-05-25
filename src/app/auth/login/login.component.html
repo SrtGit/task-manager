@@ -1,16 +1,29 @@
 
 <main>
+    
     <h1>Welcome to TaskManager</h1>
-    <h2>Please Enter your Username and Password:</h2>
+    <h2 *ngIf="!wantToRegister">Anna käyttäjä tunnus ja salasana:</h2>
+    <h2 *ngIf="wantToRegister">Rekisteröidy:</h2>
     
     <form [formGroup]="login" (ngSubmit)="onSubmit()">
     
-        <label for="userName">Username:</label><br>
-        <input type="text" id="userName" name="userName" formControlName="userName"><br><br>
+        <label for="userName">Käyttäjätunnus:</label><br>
+        <input type="text" id="userName" name="userName" formControlName="userName" required><br><br>
     
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" formControlName="password"><br>
-        <button type="submit" [disabled]="!login.valid">Kirjaudu</button>
+        <label for="password">Salasana:</label><br>
+        <input type="password" id="password" name="password" formControlName="password" required><br>
+        <button type="submit" [disabled]="!login.valid">
+            <span *ngIf="wantToRegister">Rekisteröidy</span>
+            <span *ngIf="!wantToRegister">Kirjaudu</span>
+        </button> <span (click)="registerView()">Tai <span class="otherOption" *ngIf="!wantToRegister">Luo käyttäjätunnus</span>
+        <span class="otherOption"  *ngIf="wantToRegister">Kirjaudu</span></span>
     </form>
     
+    <div class="error" *ngIf="errorDuringLogin && !wantToRegister">
+        <p>Väärä tunnus tai salasana!</p>
+    </div>
+    <div class="error" *ngIf="registerError && wantToRegister">
+        <p>Error: Käyttäjätunnus on jo olemassa!</p>
+    </div>
+
     </main>
